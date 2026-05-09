@@ -1,5 +1,5 @@
-# Staging: small HA, mirrors prod sizing roughly
-replicaCount: 2
+# Staging: 1 replica on t3.micro to stay within 1 GiB RAM
+replicaCount: 1
 
 env:
   ENVIRONMENT: staging

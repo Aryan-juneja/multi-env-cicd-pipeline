@@ -1,5 +1,5 @@
-# Prod: HA, headroom, full ingress host
-replicaCount: 3
+# Prod: 2 replicas (HA pair) — sized for t3.micro free tier
+replicaCount: 2
 
 env:
   ENVIRONMENT: prod
@@ -17,8 +17,8 @@ ingress:
 
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 50m
+    memory: 80Mi
   limits:
-    cpu: 500m
-    memory: 256Mi
+    cpu: 300m
+    memory: 192Mi
