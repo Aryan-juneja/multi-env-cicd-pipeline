@@ -44,8 +44,8 @@ GitHub push -> GitHub Actions
 - [x] Phase 3 — Raw Kubernetes manifests + local `kind` cluster + ingress-nginx
 - [x] Phase 4 — Helm chart with `values-{dev,staging,prod}.yaml`, three releases on one cluster
 - [x] Phase 5 — GitHub Actions CI: pytest, build, Trivy scan, push to AWS ECR via OIDC (no long-lived keys)
-- [ ] Phase 6 — GitHub Actions CD: deploy to dev/staging/prod with approval gate
-- [ ] Phase 6.5 — k3s on EC2 t2.micro (3 namespaces for dev/staging/prod)
+- [x] Phase 6 — GitHub Actions CD: auto-deploy to dev on main, tag-driven staging then prod with required-reviewer approval gate
+- [x] Phase 6.5 — k3s on AWS EC2 t3.micro (free tier), three namespaces, ingress-nginx, 2 GiB swap
 - [ ] Phase 7 — Polish: architecture diagram, screenshots, release tagging
 
 ## Run locally
