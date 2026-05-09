@@ -1,0 +1,21 @@
+# Staging: small HA, mirrors prod sizing roughly
+replicaCount: 2
+
+env:
+  ENVIRONMENT: staging
+  APP_VERSION: "0.1.0"
+
+ingress:
+  enabled: true
+  className: nginx
+  host: staging.myapp.local
+  path: /
+  pathType: Prefix
+
+resources:
+  requests:
+    cpu: 75m
+    memory: 96Mi
+  limits:
+    cpu: 300m
+    memory: 192Mi

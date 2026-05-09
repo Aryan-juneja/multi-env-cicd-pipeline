@@ -1,0 +1,21 @@
+# Dev: small footprint, single replica, debug-friendly
+replicaCount: 1
+
+env:
+  ENVIRONMENT: dev
+  APP_VERSION: "0.1.0"
+
+ingress:
+  enabled: true
+  className: nginx
+  host: dev.myapp.local
+  path: /
+  pathType: Prefix
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi

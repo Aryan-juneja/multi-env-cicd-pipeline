@@ -1,0 +1,41 @@
+# Default values. Per-environment files override only what's different.
+
+replicaCount: 1
+
+image:
+  repository: multi-env-cicd-pipeline
+  tag: dev
+  pullPolicy: IfNotPresent
+
+# Environment variables surfaced into the container.
+# /version reads APP_VERSION, GIT_SHA, ENVIRONMENT.
+env:
+  ENVIRONMENT: local
+  APP_VERSION: "0.1.0"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  host: myapp.local
+  path: /
+  pathType: Prefix
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+probes:
+  liveness:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readiness:
+    initialDelaySeconds: 2
+    periodSeconds: 5

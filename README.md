@@ -42,7 +42,7 @@ GitHub push -> GitHub Actions
 - [x] Phase 1 — FastAPI app with `/`, `/health`, `/version` + tests
 - [x] Phase 2 — Multi-stage Dockerfile, non-root user (UID 10001), `.dockerignore`
 - [x] Phase 3 — Raw Kubernetes manifests + local `kind` cluster + ingress-nginx
-- [ ] Phase 4 — Helm chart with `values-{dev,staging,prod}.yaml`
+- [x] Phase 4 — Helm chart with `values-{dev,staging,prod}.yaml`, three releases on one cluster
 - [ ] Phase 5 — GitHub Actions CI: test, build, Trivy scan, push to ECR
 - [ ] Phase 6 — GitHub Actions CD: deploy to dev/staging/prod with approval gate
 - [ ] Phase 6.5 — k3s on EC2 t2.micro (3 namespaces for dev/staging/prod)
@@ -77,7 +77,7 @@ docker build \
 docker run --rm -p 8000:8000 multi-env-cicd-pipeline:dev
 ```
 
-## Deploy locally on `kind`
+## Deploy locally on `kind` (3 envs on 1 cluster)
 
 ```bash
 # Create cluster (host 8080 -> ingress 80, host 8443 -> ingress 443)
@@ -90,14 +90,28 @@ kubectl wait --namespace ingress-nginx --for=condition=available --timeout=180s 
 # Load local image into the cluster
 kind load docker-image multi-env-cicd-pipeline:dev --name multi-env-cicd
 
-# Apply raw manifests
-kubectl apply -f k8s/
-kubectl rollout status deployment/myapp
+# Install all three environments
+for env in dev staging prod; do
+  helm upgrade --install myapp ./chart \
+    -f chart/values-$env.yaml \
+    -n $env --create-namespace \
+    --wait
+done
 
-# Hit it through the ingress
-curl -H "Host: myapp.local" http://localhost:8080/health
+# Hit each environment through its own ingress host
+curl -H "Host: dev.myapp.local"     http://localhost:8080/version
+curl -H "Host: staging.myapp.local" http://localhost:8080/version
+curl -H "Host: prod.myapp.local"    http://localhost:8080/version
+
+# Inspect a release
+helm list -A
+helm get values myapp -n prod
+helm history myapp -n prod
 
 # Tear down
+helm uninstall myapp -n dev
+helm uninstall myapp -n staging
+helm uninstall myapp -n prod
 kind delete cluster --name multi-env-cicd
 ```
 
@@ -111,7 +125,13 @@ multi-env-cicd-pipeline/
 ├── requirements.txt      # Runtime deps
 ├── requirements-dev.txt  # Test/dev deps
 ├── Dockerfile            # (Phase 2)
-├── chart/                # Helm chart (Phase 4)
+├── chart/                # Helm chart
+│   ├── Chart.yaml
+│   ├── values.yaml          # defaults
+│   ├── values-dev.yaml      # per-env overrides
+│   ├── values-staging.yaml
+│   ├── values-prod.yaml
+│   └── templates/
 ├── .github/workflows/    # CI/CD pipelines (Phase 5+)
-└── infra/                # k3s bootstrap script (Phase 6.5)
+└── infra/                # kind config + k3s bootstrap (Phase 6.5)
 ```
