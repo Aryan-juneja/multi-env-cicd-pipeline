@@ -43,7 +43,7 @@ GitHub push -> GitHub Actions
 - [x] Phase 2 — Multi-stage Dockerfile, non-root user (UID 10001), `.dockerignore`
 - [x] Phase 3 — Raw Kubernetes manifests + local `kind` cluster + ingress-nginx
 - [x] Phase 4 — Helm chart with `values-{dev,staging,prod}.yaml`, three releases on one cluster
-- [ ] Phase 5 — GitHub Actions CI: test, build, Trivy scan, push to ECR
+- [x] Phase 5 — GitHub Actions CI: pytest, build, Trivy scan, push to AWS ECR via OIDC (no long-lived keys)
 - [ ] Phase 6 — GitHub Actions CD: deploy to dev/staging/prod with approval gate
 - [ ] Phase 6.5 — k3s on EC2 t2.micro (3 namespaces for dev/staging/prod)
 - [ ] Phase 7 — Polish: architecture diagram, screenshots, release tagging
