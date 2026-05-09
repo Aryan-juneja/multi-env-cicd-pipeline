@@ -40,7 +40,7 @@ GitHub push -> GitHub Actions
 ## Roadmap
 
 - [x] Phase 1 — FastAPI app with `/`, `/health`, `/version` + tests
-- [ ] Phase 2 — Multi-stage Dockerfile, non-root user
+- [x] Phase 2 — Multi-stage Dockerfile, non-root user (UID 10001), `.dockerignore`
 - [ ] Phase 3 — Raw Kubernetes manifests (deploy locally on kind)
 - [ ] Phase 4 — Helm chart with `values-{dev,staging,prod}.yaml`
 - [ ] Phase 5 — GitHub Actions CI: test, build, Trivy scan, push to ECR
@@ -64,6 +64,17 @@ uvicorn app.main:app --reload --port 8000
 # Try it
 curl http://localhost:8000/health
 curl http://localhost:8000/version
+```
+
+## Run in Docker
+
+```bash
+docker build \
+  --build-arg APP_VERSION=0.1.0 \
+  --build-arg GIT_SHA=$(git rev-parse --short HEAD) \
+  -t multi-env-cicd-pipeline:dev .
+
+docker run --rm -p 8000:8000 multi-env-cicd-pipeline:dev
 ```
 
 ## Project layout

@@ -1,0 +1,39 @@
+# VCS / CI
+.git/
+.github/
+.gitignore
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Tests / dev-only deps (not needed in the runtime image)
+tests/
+requirements-dev.txt
+
+# Helm / infra (not part of the image)
+chart/
+infra/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Local env files
+.env
+.env.*
+
+# Docs / Docker self-reference
+README.md
+Dockerfile
+.dockerignore
