@@ -7,6 +7,11 @@ image:
   tag: dev
   pullPolicy: IfNotPresent
 
+# References Kubernetes secrets in the deploy namespace (created out-of-band
+# by the CD workflow before each deploy via `kubectl create secret docker-registry`).
+# Empty list = pulling from a registry that doesn't need auth (e.g., local kind).
+imagePullSecrets: []
+
 # Environment variables surfaced into the container.
 # /version reads APP_VERSION, GIT_SHA, ENVIRONMENT.
 env:

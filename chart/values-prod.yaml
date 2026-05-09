@@ -5,6 +5,9 @@ env:
   ENVIRONMENT: prod
   APP_VERSION: "0.1.0"
 
+imagePullSecrets:
+  - name: ecr-pull
+
 ingress:
   enabled: true
   className: nginx
