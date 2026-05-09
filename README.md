@@ -41,7 +41,7 @@ GitHub push -> GitHub Actions
 
 - [x] Phase 1 — FastAPI app with `/`, `/health`, `/version` + tests
 - [x] Phase 2 — Multi-stage Dockerfile, non-root user (UID 10001), `.dockerignore`
-- [ ] Phase 3 — Raw Kubernetes manifests (deploy locally on kind)
+- [x] Phase 3 — Raw Kubernetes manifests + local `kind` cluster + ingress-nginx
 - [ ] Phase 4 — Helm chart with `values-{dev,staging,prod}.yaml`
 - [ ] Phase 5 — GitHub Actions CI: test, build, Trivy scan, push to ECR
 - [ ] Phase 6 — GitHub Actions CD: deploy to dev/staging/prod with approval gate
@@ -75,6 +75,30 @@ docker build \
   -t multi-env-cicd-pipeline:dev .
 
 docker run --rm -p 8000:8000 multi-env-cicd-pipeline:dev
+```
+
+## Deploy locally on `kind`
+
+```bash
+# Create cluster (host 8080 -> ingress 80, host 8443 -> ingress 443)
+kind create cluster --name multi-env-cicd --config infra/kind-config.yaml
+
+# Install ingress-nginx
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+kubectl wait --namespace ingress-nginx --for=condition=available --timeout=180s deployment/ingress-nginx-controller
+
+# Load local image into the cluster
+kind load docker-image multi-env-cicd-pipeline:dev --name multi-env-cicd
+
+# Apply raw manifests
+kubectl apply -f k8s/
+kubectl rollout status deployment/myapp
+
+# Hit it through the ingress
+curl -H "Host: myapp.local" http://localhost:8080/health
+
+# Tear down
+kind delete cluster --name multi-env-cicd
 ```
 
 ## Project layout
