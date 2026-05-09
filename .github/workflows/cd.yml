@@ -81,10 +81,12 @@ jobs:
       - name: Helm upgrade --install
         run: |
           ECR_URI="${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_REPOSITORY }}"
+          HOST_DASHED="$(echo "${{ vars.K3S_HOST }}" | tr . -)"
           helm upgrade --install myapp ./chart \
             -f chart/values-dev.yaml \
             --set image.repository="$ECR_URI" \
             --set image.tag="${{ steps.meta.outputs.tag }}" \
+            --set ingress.host="dev.${HOST_DASHED}.nip.io" \
             -n dev \
             --atomic --wait --timeout 5m
 
@@ -148,10 +150,12 @@ jobs:
       - name: Helm upgrade --install
         run: |
           ECR_URI="${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_REPOSITORY }}"
+          HOST_DASHED="$(echo "${{ vars.K3S_HOST }}" | tr . -)"
           helm upgrade --install myapp ./chart \
             -f chart/values-staging.yaml \
             --set image.repository="$ECR_URI" \
             --set image.tag="${{ steps.meta.outputs.tag }}" \
+            --set ingress.host="staging.${HOST_DASHED}.nip.io" \
             -n staging \
             --atomic --wait --timeout 5m
 
@@ -215,10 +219,12 @@ jobs:
       - name: Helm upgrade --install
         run: |
           ECR_URI="${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_REPOSITORY }}"
+          HOST_DASHED="$(echo "${{ vars.K3S_HOST }}" | tr . -)"
           helm upgrade --install myapp ./chart \
             -f chart/values-prod.yaml \
             --set image.repository="$ECR_URI" \
             --set image.tag="${{ steps.meta.outputs.tag }}" \
+            --set ingress.host="prod.${HOST_DASHED}.nip.io" \
             -n prod \
             --atomic --wait --timeout 5m
 
